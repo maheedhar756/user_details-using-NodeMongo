@@ -43,3 +43,5 @@ app.post("/users", async (req, res) => {
     console.error("Error created user: ", err);
   }
 });
+
+module.exports = app
