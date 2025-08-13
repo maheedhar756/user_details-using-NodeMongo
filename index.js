@@ -46,4 +46,18 @@ app.post("/users", async (req, res) => {
   }
 });
 
+const authenticateMiddleWare = async (req, res, next) => {
+  const {name, email, password} = req.body
+  const userDetails = await User.find({name})
+  if (userDetails === undefined){
+    
+  }else{
+    res.send("user already registered")
+  }
+}
+
+app.post("/register", authenticateMiddleWare, async (req, res) => {
+
+})
+
 module.exports = app
