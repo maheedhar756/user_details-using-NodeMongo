@@ -1,7 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-const cors = require('cors')
+const cors = require("cors")
+const jwt = require("jsonwebtoken")
 
 const app = express();
 dotenv.config();
@@ -35,6 +36,25 @@ app.get("/users", async (req, res) => {
   }
 });
 
+const authenticateMiddleWare = async (req, res, next) => {
+  const {name, email, password} = req.body
+  const userDetails = await User.find({name})
+  console.log(userDetails)
+  if (userDetails.length == 0){
+    const payload = {
+      name: name,
+      email: email,
+      password: password
+    }
+    const token = jwt.sign(payload, "MY_SECRET_CODE")
+    res.send({
+      jwtToken: token
+    })
+  }else{
+    res.send("user already registered")
+  }
+}
+
 app.post("/users", async (req, res) => {
   const { name, email } = req.body;
   try {
@@ -45,16 +65,6 @@ app.post("/users", async (req, res) => {
     console.error("Error created user: ", err);
   }
 });
-
-const authenticateMiddleWare = async (req, res, next) => {
-  const {name, email, password} = req.body
-  const userDetails = await User.find({name})
-  if (userDetails === undefined){
-    
-  }else{
-    res.send("user already registered")
-  }
-}
 
 app.post("/register", authenticateMiddleWare, async (req, res) => {
 
